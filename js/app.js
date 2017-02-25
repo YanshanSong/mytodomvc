@@ -43,18 +43,18 @@
 					break;
 				}
 			}
-		}
+		};
 
-		//清空
+		// 清空
 		$scope.clear = function() {
 			var result = [];
-			for (var i = 0, len = $scope.todos.length; i < len; i++) {
+			for (var i = 0; i < $scope.todos.length; i++) {
 				if(!$scope.todos[i].completed) {
-					result.push = ($scope.todos[i]);
+					result.push($scope.todos[i]);
 				}
 			}
 			$scope.todos = result
-		}
+		};
 
 		//是否已经有完成的
 		//若ng-show绑定函数，该函数必须返回布尔值
@@ -65,7 +65,26 @@
 				}
 			}
 			return false;
+		};
+
+		//当前编辑元素
+		$scope.currentEditingId = -1;
+		$scope.editing = function(id) {
+			$scope.currentEditingId = id;
 		}
+		$scope.save = function(id) {
+			$scope.currentEditingId = -1;
+		};
+
+		
+		var now = true;
+		$scope.toggleAll = function(){
+			for (var i = 0; i < $scope.todos.length; i++) {
+				$scope.todos[i].completed = now;
+			}
+			now = !now;
+		};
+		
 		//完美处理id，但效率低
 		function getId(){
 			var id = Math.random();
