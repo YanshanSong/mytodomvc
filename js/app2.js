@@ -10,15 +10,20 @@
 	//为应用程序创建一个模块，用来管理界面的结构
 	var myApp = angular.module('mytodoMVC',['ngRoute']);
 	//路由配置
-	// myApp.config(['$routeProvider','$locationProvider',function($routeProvider,$locationProvider){
-	// 	$locationProvider.hashPrefix('');
-	// 	$routeProvider
-	// 	.when('/:status?',{
-	// 		controller:'mainController',
-	// 	})
-	// }])
+	myApp.config(['$routeProvider','$locationProvider',function($routeProvider,$locationProvider){
+		$locationProvider.hashPrefix('');
+		$routeProvider
+		.when('/:status?',{
+			controller:'mainController',
+			templateUrl:"main_template"
+		})
+		// .otherwise({
+		// 	redirectTo:'/'
+		// })
+	}])
 
-	myApp.controller('mainController',['$scope','$location',function($scope,$location){
+	myApp.controller('mainController',['$scope','$routeParams','$route',
+		function($scope,$routeParams,$route){
 		//文本框需要一个模型
 		$scope.text = '';
 
@@ -109,32 +114,21 @@
 
 		//watch只能监视属于$scope的成员
 		//让$scope也有一个$location成员
-		$scope.$location = $location;
-		$scope.$watch('$location.url()',function(now,old){
-			// console.log(now);
-			//状态筛选
-			$scope.selector = {}; // {} {completed:true}{ completed:false}
-			// 1.拿到锚点值
-			// var hash = window.location.hash;  //这样写就必须要有window对象
-            // 不引入window对象
-			// var url = $location.url()
-			// console.log(url);
-			// 2.根据锚点值对selector做变换
-			switch(now){
-				case '/#%2F':
-				$scope.selector = {}
+		$scope.selector = {};  // {} {completed:true} {completed:false}
+		console.log($routeParams);
+		var status = $routeParams.status;
+		switch(status) {
+			case 'active':
+				$scope.selector = {completed:false};
 				break;
-				case '/#%2Factive':
-				$scope.selector = { completed:false }
+			case 'completed':
+				$scope.selector = {completed:true};
 				break;
-				case '/#%2Fcompleted':
-				$scope.selector = { completed:true }
+			default:
+				$scope.selector = {};
 				break;
-				default:
-				$scope.selector = {}
-			}
-		})
-		
+		}
+	
 		//自定义比较函数
 		//source:过滤器前的属性值，target:过滤器后的属性值
 		$scope.equalCompare = function(source,target) {
