@@ -8,7 +8,7 @@
 	* description
 	*/
 	//为应用程序创建一个模块，用来管理界面的结构
-	var myApp = angular.module('mytodoMVC',['ngRoute']);
+	var myApp = angular.module('app',['ngRoute']);
 	//路由配置
 	myApp.config(['$routeProvider','$locationProvider',function($routeProvider,$locationProvider){
 		$locationProvider.hashPrefix('');
@@ -17,13 +17,9 @@
 			controller:'mainController',
 			templateUrl:"main_template"
 		})
-		// .otherwise({
-		// 	redirectTo:'/'
-		// })
 	}])
 
-	myApp.controller('mainController',['$scope','$routeParams','$route',
-		function($scope,$routeParams,$route){
+	myApp.controller('mainController',['$scope','$location',function($scope,$location){
 		//文本框需要一个模型
 		$scope.text = '';
 
@@ -114,21 +110,32 @@
 
 		//watch只能监视属于$scope的成员
 		//让$scope也有一个$location成员
-		$scope.selector = {};  // {} {completed:true} {completed:false}
-		console.log($routeParams);
-		var status = $routeParams.status;
-		switch(status) {
-			case 'active':
-				$scope.selector = {completed:false};
+		$scope.$location = $location;
+		$scope.$watch('$location.url()',function(now,old){
+			// console.log(now);
+			//状态筛选
+			$scope.selector = {}; // {} {completed:true}{ completed:false}
+			// 1.拿到锚点值
+			// var hash = window.location.hash;  //这样写就必须要有window对象
+            // 不引入window对象
+			// var url = $location.url()
+			// console.log(url);
+			// 2.根据锚点值对selector做变换
+			switch(now){
+				case '/':
+				$scope.selector = {}
 				break;
-			case 'completed':
-				$scope.selector = {completed:true};
+				case '/active':
+				$scope.selector = { completed:false }
 				break;
-			default:
-				$scope.selector = {};
+				case '/completed':
+				$scope.selector = { completed:true }
 				break;
-		}
-	
+				default:
+				$scope.selector = {}
+			}
+		})
+		
 		//自定义比较函数
 		//source:过滤器前的属性值，target:过滤器后的属性值
 		$scope.equalCompare = function(source,target) {
