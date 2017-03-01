@@ -8,15 +8,10 @@
 	* description
 	*/
 	//为应用程序创建一个模块，用来管理界面的结构
-	var myApp = angular.module('mytodoMVC',['ngRoute']);
-	//路由配置
-	// myApp.config(['$routeProvider','$locationProvider',function($routeProvider,$locationProvider){
-	// 	$locationProvider.hashPrefix('');
-	// 	$routeProvider
-	// 	.when('/:status?',{
-	// 		controller:'mainController',
-	// 	})
-	// }])
+	var myApp = angular.module('mytodoMVC',[]);
+	myApp.config(['$locationProvider',function($locationProvider) {
+		$locationProvider.hashPrefix('');
+	}]);
 
 	myApp.controller('mainController',['$scope','$location',function($scope,$location){
 		//文本框需要一个模型
@@ -121,13 +116,13 @@
 			// console.log(url);
 			// 2.根据锚点值对selector做变换
 			switch(now){
-				case '/#%2F':
+				case '/F':
 				$scope.selector = {}
 				break;
-				case '/#%2Factive':
+				case '/active':
 				$scope.selector = { completed:false }
 				break;
-				case '/#%2Fcompleted':
+				case '/completed':
 				$scope.selector = { completed:true }
 				break;
 				default:
